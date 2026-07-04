@@ -1,0 +1,227 @@
+{
+  "name": "My workflow 7",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -496,
+        0
+      ],
+      "id": "904d2c18-7ae1-4ab1-86ae-c1467040b9a5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dbe01cca-5a69-4fd0-955e-8df7ef200c17",
+              "name": "topic",
+              "value": "Latest development in LLMs",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        0
+      ],
+      "id": "c4ceeb46-c964-4541-8516-30bc0df3b01b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "= Research today is most important topic {{ $json.topic }}\nProduce a daily brief ,use  latest news articles",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are an automated AI agent designed to run continuously at 5-minute intervals. Your primary task is to perform a real-time web search to identify the latest developments, use cases, tools, and updates related to Large Language Models (LLMs), including but not limited to advancements from OpenAI, Google, Meta, Anthropic, and other relevant organizations.\n\nAt each execution:\n\n1. Perform a fresh and relevant search query to gather the most recent information about LLM usage, applications, breakthroughs, product launches, research updates, and industry trends.\n2. Filter out outdated or redundant information and prioritize only new, meaningful, and high-impact updates.\n3. Summarize the findings in a clear, concise, and structured format using simple language.\n4. Ensure the summary highlights:\n\n   * New tools or platforms\n   * Real-world applications or use cases\n   * Important announcements or releases\n   * Any significant trends or insights\n5. Avoid duplication from previous runs; focus only on newly available information.\n\nAfter generating the summary:\n\n* Format the output as a professional email report.\n* Include a subject line reflecting the latest LLM updates.\n* Keep the email brief but informative (5–10 bullet points maximum).\n* Ensure clarity, readability, and relevance.\n* Must be after goolge search not fully LLMs One \nFinally, automatically send the email to the configured recipient using the integrated email service.\n\nDo not perform any unrelated tasks. Your operation must remain focused, accurate, and efficient at all times.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "815be4a9-6893-4ba1-8afe-ce405a03ee4a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        192
+      ],
+      "id": "16cab648-bfa1-448c-8f97-62e7fe88d8de",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LZSujvpU1Hq6NjHJ",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        288
+      ],
+      "id": "a9c188c5-36e0-46bb-adb6-fa0d3e5d9032",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "SzE00qquFpefZUoE",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        64,
+        208
+      ],
+      "id": "b3b85132-126e-43a6-97b3-dd8c3eb8c92f",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "Q5w80eretCo8SBQ2",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "siddique5623530@gmail.com",
+        "subject": "Latest LLM News",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "2486f0a9-28dd-4f61-b453-ebfd10f497b2",
+      "name": "Send a message",
+      "webhookId": "2a967ec4-a362-420e-86cc-2af8f7378c7c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z7QBS14zaNRCwmW4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c20acaa5-f7da-4634-b922-51a56d88bafa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "97b30d63b984fa1551246ff57548a75e4b0f840b465b2311ba1960c14db35415"
+  },
+  "id": "6MzveHgwJKtJkU47kPICn",
+  "tags": []
+}
