@@ -48,6 +48,4 @@ This n8n workflow automates the resume screening process by comparing uploaded r
 - Applicant Tracking System (ATS) support.
 - Candidate scoring and reporting.
 
-## License
 
-MIT License
