@@ -1,0 +1,438 @@
+{
+  "name": "resume - fixed",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1RDxtpMwsCkcUFnflysZJoZ87TwEsDW2_",
+          "mode": "list",
+          "cachedResultName": "n8n_project",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1RDxtpMwsCkcUFnflysZJoZ87TwEsDW2_"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        64
+      ],
+      "id": "fc91b947-ed2f-411a-ba35-48ba517fc026",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wGLzzjG8pWB8kReo",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "7ad1f2fc-7b86-4adb-89cf-39437e33ffbc",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wGLzzjG8pWB8kReo",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -32
+      ],
+      "id": "83034a40-2ee4-4255-acec-a5c2b7ae591b",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "resumeTextAssign1",
+              "name": "resumeText",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -32
+      ],
+      "id": "1ed92c96-e548-46fb-ab5f-0eb042bc06a8",
+      "name": "Rename Resume Text"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1GClMsFryTL2iinZSu4dXuYb6jVGQiXQz/view?usp=drive_link",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        176
+      ],
+      "id": "c25981a5-2abb-42e9-8518-5d160ada9c51",
+      "name": "Download file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "wGLzzjG8pWB8kReo",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        176
+      ],
+      "id": "2ee1d83e-e31b-472a-ad45-e31f65272787",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "jdTextAssign1",
+              "name": "jobDescription",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        176
+      ],
+      "id": "f0969f10-965a-4f13-bf2f-d2f6d40d1df3",
+      "name": "Rename JD Text"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        64
+      ],
+      "id": "ce7ef9ae-f412-4dca-85a2-2c907a8d14b1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Score the following resume against this job description:\n\n## JOB DESCRIPTION:\n{{ $json.jobDescription }}\n\n## RESUME TEXT:\n{{ $json.resumeText }}\n\n## SCORING CRITERIA (Total: 100 points):\n- Technical Skills Match (Python, SQL, ML, PyTorch/TensorFlow): 0-25 points\n- Experience Relevance (5+ years, data science projects): 0-25 points\n- Education & Certifications (Master's, Azure AI cert): 0-20 points\n- Project Portfolio (RAG, Computer Vision, pipelines): 0-15 points\n- Communication & Format: 0-10 points\n- Cultural Fit & Leadership: 0-5 points\n\n## KEYWORD DENSITY CHECK:\nRate the resume's alignment with these keywords (1-10):\n- Python\n- SQL\n- Machine Learning\n- PyTorch or TensorFlow\n- Data visualization (Tableau/Power BI)\n- Cloud platforms (AWS/Azure/GCP)\n- RAG systems\n- Computer Vision\n\n## OUTPUT REQUIREMENTS:\nProvide your analysis in this EXACT format. Be specific and detailed. Do not use JSON.\n\n### CANDIDATE_NAME: [Extract full name]\n\n### CONTACT_INFO: [Email and Phone if available]\n\n### TOTAL_SCORE: [X]/100\n\n### BREAKDOWN:\n- Technical Skills: [X]/25\n- Experience: [X]/25\n- Education: [X]/20\n- Projects: [X]/15\n- Formatting: [X]/10\n- Soft Skills: [X]/5\n\n### KEYWORD_MATCHES (1-10): [X]/10\n\n### STRENGTHS:\n- [Specific strength 1 - reference the JD]\n- [Specific strength 2 - reference the JD]\n- [Specific strength 3 - reference the JD]\n\n### GAPS:\n- [Specific gap 1 - compare to JD requirements]\n- [Specific gap 2 - compare to JD requirements]\n- [Specific gap 3 - compare to JD requirements]\n\n### RECOMMENDATION: [Hire/Interview/Reject/Consider]\n\n### INTERVIEW_QUESTIONS:\n[3 specific technical questions to ask this candidate]\n\n### NOTES:\n[2-3 sentences with overall assessment and specific comments]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You are a senior technical recruiter with 12+ years of experience in data science and AI hiring at top-tier companies. You have personally hired over 200 data scientists and have deep expertise in:\n\n- Python, SQL, Machine Learning, Deep Learning (PyTorch, TensorFlow)\n- Cloud platforms (AWS, Azure, GCP)\n- RAG systems, Computer Vision, MLOps\n- Data visualization (Tableau, Power BI)\n- Data science interview processes at FAANG and startups\n\nYour evaluation philosophy:\n- You are objective, data-driven, and evidence-based\n- You benchmark candidates against real market standards\n- You identify gaps that would impact performance in the first 90 days\n- You recognize potential in early-career candidates while being honest about gaps\n- You never inflate scores - you are rigorous and fair\n\nScoring benchmarks:\n- 90-100: Exceptional - exceeds requirements, immediate hire\n- 75-89: Strong - meets most requirements, recommend interview\n- 60-74: Promising - some gaps, consider for junior/intermediate role\n- Below 60: Significant gaps - reject or refer elsewhere\n\nYou provide actionable feedback that helps hiring managers make decisions.\nYou are professional, constructive, and specific in your assessment.\n\nIMPORTANT: Return ONLY the analysis in the exact format specified. Do not wrap it in JSON or any other structure.",
+          "maxOutputTokens": 3000,
+          "temperature": 0.3,
+          "topP": 1,
+          "topK": 40
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        64
+      ],
+      "id": "9702bad2-1709-4068-8a45-2ec23f90cff9",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ifr9xxA37cMPlCGE",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\n\n// The Gemini node's text output can land under different keys depending on\n// version/config - grab whichever is present.\nlet raw = item.content || item.text || item.output || item.message?.content || '';\n\n// If raw is an object, try to extract the text\nif (typeof raw === 'object' && raw !== null) {\n  if (raw.parts && Array.isArray(raw.parts) && raw.parts.length > 0) {\n    raw = raw.parts[0].text || raw.parts[0] || '';\n  } else if (raw.text) {\n    raw = raw.text;\n  } else {\n    raw = JSON.stringify(raw);\n  }\n}\n\nif (typeof raw !== 'string') {\n  raw = String(raw);\n}\n\nfunction extract(label, str) {\n  const escapedLabel = label.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\n  const regex = new RegExp(`### ${escapedLabel}:([\\\\s\\\\S]*?)(?=\\\\n### |$)`, 'i');\n  const match = str.match(regex);\n  return match ? match[1].trim() : '';\n}\n\nfunction extractScore(label, str) {\n  const regex = new RegExp(`${label}:\\\\s*(\\\\d+)/\\\\d+`, 'i');\n  const match = str.match(regex);\n  return match ? match[1] : '0';\n}\n\nfunction extractBreakdown(str) {\n  const regex = /### BREAKDOWN:([\\s\\S]*?)(?=\\n### |$)/i;\n  const match = str.match(regex);\n  return match ? match[1].trim() : '';\n}\n\n// Format text with proper line breaks for Google Sheets\nfunction formatForSheets(text) {\n  if (!text) return '';\n  // Replace \\n with actual line breaks for Google Sheets\n  return text.replace(/\\\\n/g, '\\n').replace(/\\n/g, ' ');\n}\n\n// Format bullet points with dashes and proper spacing\nfunction formatBulletPoints(text) {\n  if (!text) return '';\n  // Split by lines, trim, and join with semicolons for Google Sheets\n  return text.split('\\n')\n    .map(line => line.trim())\n    .filter(line => line.length > 0)\n    .join('; ');\n}\n\nfunction formatStrengths(text) {\n  if (!text) return '';\n  // Extract bullet points and format\n  return text.split('\\n')\n    .map(line => line.trim())\n    .filter(line => line.startsWith('-') || line.startsWith('•'))\n    .map(line => line.replace(/^[-•]\\s*/, ''))\n    .join('; ');\n}\n\nfunction formatGaps(text) {\n  if (!text) return '';\n  return text.split('\\n')\n    .map(line => line.trim())\n    .filter(line => line.startsWith('-') || line.startsWith('•'))\n    .map(line => line.replace(/^[-•]\\s*/, ''))\n    .join('; ');\n}\n\n// Extract individual scores from breakdown\nfunction extractBreakdownScores(str) {\n  const scores = {\n    technical: extractScore('Technical Skills', str),\n    experience: extractScore('Experience', str),\n    education: extractScore('Education', str),\n    projects: extractScore('Projects', str),\n    formatting: extractScore('Formatting', str),\n    softSkills: extractScore('Soft Skills', str)\n  };\n  return scores;\n}\n\nconst breakdownText = extractBreakdown(raw);\nconst scores = extractBreakdownScores(breakdownText);\n\n// Extract strengths and gaps with proper formatting\nlet strengths = extract('STRENGTHS', raw);\nlet gaps = extract('GAPS', raw);\n\n// Format strengths as semicolon-separated list\nstrengths = strengths.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line.startsWith('-') || line.startsWith('•'))\n  .map(line => line.replace(/^[-•]\\s*/, ''))\n  .join('; ');\n\n// Format gaps as semicolon-separated list\ngaps = gaps.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line.startsWith('-') || line.startsWith('•'))\n  .map(line => line.replace(/^[-•]\\s*/, ''))\n  .join('; ');\n\n// Format interview questions as semicolon-separated list\nlet interviewQuestions = extract('INTERVIEW_QUESTIONS', raw);\ninterviewQuestions = interviewQuestions.split('\\n')\n  .map(line => line.trim())\n  .filter(line => line.length > 0 && line.match(/^\\d+\\./))\n  .join('; ');\n\nreturn {\n  json: {\n    // Basic info\n    CandidateName: extract('CANDIDATE_NAME', raw),\n    ContactInfo: extract('CONTACT_INFO', raw),\n    \n    // Scores\n    TotalScore: extract('TOTAL_SCORE', raw),\n    TechnicalScore: scores.technical,\n    ExperienceScore: scores.experience,\n    EducationScore: scores.education,\n    ProjectsScore: scores.projects,\n    FormattingScore: scores.formatting,\n    SoftSkillsScore: scores.softSkills,\n    KeywordMatches: extract('KEYWORD_MATCHES \\\\(1-10\\\\)', raw),\n    \n    // Formatted sections\n    Strengths: strengths,\n    Gaps: gaps,\n    Recommendation: extract('RECOMMENDATION', raw),\n    InterviewQuestions: interviewQuestions,\n    Notes: extract('NOTES', raw),\n    \n    // Metadata\n    ProcessedAt: new Date().toISOString(),\n    \n    // Raw response (for debugging)\n    RawResponse: raw\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        64
+      ],
+      "id": "c6eab8d4-6e5a-48d5-b602-f2a4167b3238",
+      "name": "Parse Gemini Response"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yPXvHalup_fPq6KKkqqAvGyaBhExu7Vum6wW1PTCXR8",
+          "mode": "list",
+          "cachedResultName": "job_realated",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yPXvHalup_fPq6KKkqqAvGyaBhExu7Vum6wW1PTCXR8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yPXvHalup_fPq6KKkqqAvGyaBhExu7Vum6wW1PTCXR8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1376,
+        64
+      ],
+      "id": "f03e56c5-6cfc-4b6a-93fe-0de88c6e56ab",
+      "name": "Append to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Xmy5TAx5a0uXufNg",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "siddique5623530@gmail.com",
+        "subject": "Applicant details added to your sheet",
+        "message": "thiis one",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        64
+      ],
+      "id": "35c42a0b-7add-478c-9f8c-ba05ed5a6a2e",
+      "name": "Send a message",
+      "webhookId": "6672203e-4a3d-44ec-8082-2a892c0663d2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z7QBS14zaNRCwmW4",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Rename Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Rename JD Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename JD Text": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Parse Gemini Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Gemini Response": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7a0452c2-209d-4db9-85de-6406a4cb14c4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "97b30d63b984fa1551246ff57548a75e4b0f840b465b2311ba1960c14db35415"
+  },
+  "id": "K7Nm1NwZzdml2lgocK1ns",
+  "tags": []
+}
