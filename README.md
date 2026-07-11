@@ -26,13 +26,10 @@ A collection of real-world **AI-powered automation workflows** built using **n8n
 - SerpAPI
 - AI Agents
 - Structured Output Parser
-
 ---
-
 # 📂 Workflows
 
 ---
-
 ## 1. 📰 AI-Powered Daily LLM News Brief
 
 Automatically searches the web for the latest developments in Large Language Models (LLMs), summarizes the most important updates using AI, and sends a professional news report via Gmail.
@@ -60,15 +57,6 @@ Generate Daily Brief
 Send Gmail
 ```
 
-### Workflow Diagram
-
-> **Add workflow screenshot here**
-
-```md
-![LLM News Workflow](images/agent_image2.png)
-```
-
----
 
 ## 2. 💬 AI Chatbot with Sentiment Analysis
 
@@ -96,15 +84,6 @@ Positive / Neutral / Negative
 Google Sheets
 ```
 
-### Workflow Diagram
-
-> **Add workflow screenshot here**
-
-```md
-![Sentiment Workflow](images/agent.png)
-```
-
----
 
 ## 3. 📄 AI Resume Screening & Candidate Evaluation
 
@@ -140,16 +119,6 @@ Google Sheets
 Email Notification
 ```
 
-### Workflow Diagram
-
-> **Add workflow screenshot here**
-
-```md
-![Resume Screening Workflow](images/resume-screening.png)
-```
-
----
-
 ## 4. 📝 AI Meeting Transcript Summarizer
 
 Automatically converts meeting transcripts into professional meeting minutes by generating summaries, action items, key decisions, and follow-up emails using AI.
@@ -178,16 +147,6 @@ Structured Output
 Send Gmail
 ```
 
-### Workflow Diagram
-
-> **Add workflow screenshot here**
-
-```md
-![Meeting Summarizer Workflow](images/meeting-summarizer.png)
-```
-
----
-
 # 📁 Repository Structure
 
 ```
@@ -201,8 +160,6 @@ Send Gmail
 ```
 
 ---
-
-
 
 # 🔑 Required Credentials
 
@@ -227,10 +184,6 @@ Depending on the workflow, configure the following credentials:
 - Sentiment Analysis
 - Email Automation
 - AI-powered Business Workflows
-
----
-
-
 
 ---
 
