@@ -65,7 +65,7 @@ Send Gmail
 > **Add workflow screenshot here**
 
 ```md
-![LLM News Workflow](images/llm-news-workflow.png)
+![LLM News Workflow](agent1/agent_image2.png)
 ```
 
 ---
