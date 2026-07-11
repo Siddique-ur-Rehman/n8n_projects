@@ -101,7 +101,7 @@ Google Sheets
 > **Add workflow screenshot here**
 
 ```md
-![Sentiment Workflow](images/chatbot-sentiment.png)
+![Sentiment Workflow](images/agent.png)
 ```
 
 ---
